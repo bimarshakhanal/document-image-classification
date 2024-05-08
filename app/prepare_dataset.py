@@ -8,6 +8,7 @@ import shutil
 
 import cv2
 import albumentations as A
+from sklearn.model_selection import train_test_split
 
 ORIGINAL_DATASET = 'dataset/original'  # original dataset path
 AUGMENTED_DATASET = 'dataset/augmented'  # dataset after some prerpocessing
@@ -111,26 +112,45 @@ def merge_dataset(original_data, augmented_data, final_data):
         if not os.path.exists(final_data):
             # create destination directory if not exist
             os.makedirs(final_data)
+            os.makedirs(os.path.join(final_data, 'train'))
+            os.makedirs(os.path.join(final_data, 'val'))
 
         for doc_class in CLASSES:
-            final_path = os.path.join(final_data, doc_class)
-            if not os.path.exists(final_path):
-                os.makedirs(final_path)
+            final_path_train = os.path.join(final_data, 'train', doc_class)
+            final_path_val = os.path.join(final_data, 'val', doc_class)
+
+            if not os.path.exists(final_path_train):
+                os.makedirs(final_path_train)
+
+            if not os.path.exists(final_path_val):
+                os.makedirs(final_path_val)
+
             augmented_path = os.path.join(augmented_data, doc_class)
             original_path = os.path.join(original_data, doc_class)
 
-            original_images = os.listdir(original_path)
+            original_images = [os.path.join(
+                original_path, path) for path in os.listdir(original_path)]
+            augmented_images = [os.path.join(
+                augmented_path, path) for path in os.listdir(augmented_path)]
             print(f'\nClass: {doc_class}')
             print(f'Original images: {len(original_images)}')
-            for image in original_images:
-                shutil.copyfile(os.path.join(original_path, image),
-                                os.path.join(final_path, image))
-
-            augmented_images = os.listdir(augmented_path)
             print(f'Augmented images: {len(augmented_images)}')
-            for image in augmented_images:
-                shutil.move(os.path.join(augmented_path, image),
-                            os.path.join(final_path, image))
+
+            all_images = original_images + augmented_images
+            train_images, val_images = train_test_split(
+                all_images, test_size=0.2, random_state=42)
+
+            print(f'Train images: {len(train_images)}')
+            print(f'Val images: {len(val_images)}')
+
+            for image in train_images:
+                shutil.copyfile(image,
+                                os.path.join(final_path_train,
+                                             image.split('/')[-1]))
+            for image in val_images:
+                shutil.copyfile(image,
+                                os.path.join(final_path_val,
+                                             image.split('/')[-1]))
 
         # Comment out the below line if you want
         #  to keep the augmented dataset directory
