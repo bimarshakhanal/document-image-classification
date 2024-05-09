@@ -25,7 +25,7 @@ IMG_WIDTH = 224
 # image transformation pipeline for augmentation
 transform = A.Compose(
     [
-        A.RandomResizedCrop(height=224, width=224, scale=(0.8, 1.0)),
+        A.Resize(height=224, width=224),
         A.HorizontalFlip(p=0.5),
         A.VerticalFlip(p=0.5),
         A.Rotate(limit=20, p=0.5),
@@ -138,7 +138,7 @@ def merge_dataset(original_data, augmented_data, final_data):
 
             all_images = original_images + augmented_images
             train_images, val_images = train_test_split(
-                all_images, test_size=0.2, random_state=42)
+                all_images, test_size=0.3, random_state=42)
 
             print(f'Train images: {len(train_images)}')
             print(f'Val images: {len(val_images)}')
