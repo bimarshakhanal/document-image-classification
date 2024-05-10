@@ -5,6 +5,7 @@ of all classes and combining augmented and original dataset
 
 import os
 import shutil
+import logging
 
 import cv2
 import albumentations as A
@@ -33,6 +34,9 @@ transform = A.Compose(
         A.ToGray(p=0.3)
     ]
 )
+
+logger = logging.getLogger('prepare_dataset')
+logging.basicConfig(level=logging.DEBUG, filename='log/log.txt')
 
 
 def augment_image(image_path, output_file):
@@ -71,6 +75,7 @@ def augment_dataset(dataset_path, output_path):
         class_path = os.path.join(dataset_path, doc_class)
 
         images = os.listdir(class_path)
+        logger.info('Augmenting %i of class %s', len(images), doc_class)
         class_output_path = os.path.join(output_path, doc_class)
 
         if not os.path.exists(class_output_path):
@@ -143,6 +148,7 @@ def merge_dataset(original_data, augmented_data, final_data):
             print(f'Train images: {len(train_images)}')
             print(f'Val images: {len(val_images)}')
 
+            logger.info('Splitting class %s into train and val set', doc_class)
             for image in train_images:
                 shutil.copyfile(image,
                                 os.path.join(final_path_train,
@@ -155,12 +161,12 @@ def merge_dataset(original_data, augmented_data, final_data):
         # Comment out the below line if you want
         #  to keep the augmented dataset directory
         # shutil.rmtree(augmented_data)
-        print(f'Original and augmented images combined to a single dataset at {
-              final_data}')
-    except FileNotFoundError as e:
-        print(e)
-    except Exception as e:
-        print(e)
+        logger.info(
+            'Original and augmented images combined to a single dataset at %s', final_data)
+    except FileNotFoundError:
+        logger.error('Unable to locate files to merge data')
+    except Exception:
+        logger.error('Failed to merge original and augmented dataset')
 
 
 if __name__ == '__main__':
