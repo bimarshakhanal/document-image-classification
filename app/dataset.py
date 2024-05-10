@@ -12,11 +12,11 @@ class ImageDataLoader:
     Class to prepare and load document image dataset
     '''
 
-    def __init__(self, train_dir, val_dir):
+    def __init__(self, train_dir, val_dir, batch_size):
         # image dimension
         self.img_height = 224
         self.img_width = 224
-        self.batch_size = 4
+        self.batch_size = batch_size
         self.train_dir = train_dir
         self.val_dir = val_dir
 

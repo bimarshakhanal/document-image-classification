@@ -46,7 +46,7 @@ class Resnet18(nn.Module):
 
 class Vgg16(nn.Module):
     """
-    A basic image classification model based on the pre-trained ResNet-18
+    A basic image classification model based on the pre-trained VGG16
     architecture.
     This class takes an image as input, passes it through a pre-trained
     ResNet-18 model with its final fully-connected layer replaced to

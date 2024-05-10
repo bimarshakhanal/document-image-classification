@@ -47,15 +47,18 @@ def evaluate_model(model, data_loader, doc_classes, writer, ds="", device='cpu')
             pred = model(x)
             preds.extend(pred.argmax(axis=1).cpu().tolist())
     # generate a classification report
-    print(classification_report(true,
-                                preds, target_names=doc_classes))
-    accuracy = accuracy_score(true, preds)
-    print(f"{ds} Accuracy: ", accuracy)
-    logger.info("%s set evaluated with accuracy score of %f", ds, accuracy)
+    report = classification_report(true,
+                                   preds, target_names=doc_classes,
+                                   output_dict=True)
+    # writer.add_hparams(f'{ds}-result', report['macro avg'])
+    # accuracy = accuracy_score(true, preds)
+    # print(f"{ds} Accuracy: ", accuracy)
+    logger.info("%s set evaluated with accuracy score of %f",
+                ds, report['accuracy'])
 
     plot_confusion_matrix(preds, true, doc_classes, writer, ds)
 
-    return true, preds
+    return {**report['macro avg'], "accuracy": report['accuracy']}
 
 
 def plot_confusion_matrix(preds, targets, doc_classes, writer, ds):

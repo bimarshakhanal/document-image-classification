@@ -35,7 +35,7 @@ parser.add_argument('--model_name', type=str, default='resnet',
 
 args = parser.parse_args()
 EPOCHS = int(args.epochs)
-lr = int(args.lr)
+lr = args.lr
 experiment_name = args.exp
 save_path = args.save_path
 MODEL_NAME = args.model_name
@@ -44,8 +44,9 @@ MODEL_NAME = args.model_name
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.manual_seed(28)
 
-# define number of classes
+# define number of classes and batch size
 NUM_CLASSES = 3
+BATCH_SIZE = 4
 
 
 def get_model(model_name):
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     # get model and data loaders
 
     model = get_model(MODEL_NAME)
-    data_loader = ImageDataLoader(TRAIN_DIR, VAL_DIR)
+    data_loader = ImageDataLoader(TRAIN_DIR, VAL_DIR, BATCH_SIZE)
     train_loader, val_loader, doc_classes = data_loader.get_loader()
 
     # tensorboard logger for experimentation tracking
@@ -83,7 +84,10 @@ if __name__ == "__main__":
         lr=lr, device=device, save_file=save_path)
 
     # evaluate model
-    true_train, preds_train = evaluate_model(
+    train_report = evaluate_model(
         model, train_loader, doc_classes, writer, 'Train', device, )
-    true_val, preds_val = evaluate_model(
+    val_report = evaluate_model(
         model, val_loader, doc_classes, writer, 'Val', device)
+
+    hparams = {'epochs': EPOCHS, 'lr': lr, 'batch_size': BATCH_SIZE}
+    writer.add_hparams(val_report, hparams)
