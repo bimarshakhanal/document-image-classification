@@ -15,7 +15,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 from train import train
-from model import ClassificationModel
+from model import Vgg16, Resnet18
 from evaluate_model import evaluate_model
 from dataset import ImageDataLoader
 
@@ -30,16 +30,37 @@ parser.add_argument('--exp', type=str, default='default_exp',
                     help='Experiment name.')
 parser.add_argument('--save_path', type=str, default=None,
                     help='Path to save model')
+parser.add_argument('--model_name', type=str, default='resnet',
+                    help='Name of CNN model to train')
 
 args = parser.parse_args()
 EPOCHS = int(args.epochs)
 lr = int(args.lr)
 experiment_name = args.exp
 save_path = args.save_path
+MODEL_NAME = args.model_name
 
 # choose device to train model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.manual_seed(28)
+
+# define number of classes
+NUM_CLASSES = 3
+
+
+def get_model(model_name):
+    '''
+    Factory method to create model instance using model name
+    '''
+    if model_name == 'vgg':
+        model = Vgg16(NUM_CLASSES)
+    elif model_name == 'resnet':
+        model = Resnet18(NUM_CLASSES)
+    else:
+        print('Invalid model name')
+        return None
+
+    return model
 
 
 if __name__ == "__main__":
@@ -48,7 +69,8 @@ if __name__ == "__main__":
     VAL_DIR = 'dataset/final/val'
 
     # get model and data loaders
-    model = ClassificationModel(3)
+
+    model = get_model(MODEL_NAME)
     data_loader = ImageDataLoader(TRAIN_DIR, VAL_DIR)
     train_loader, val_loader, doc_classes = data_loader.get_loader()
 
@@ -57,8 +79,8 @@ if __name__ == "__main__":
 
     # train model
     train_acc, train_loss, val_acc, val_loss = train(
-        model, EPOCHS, train_loader, val_loader, lr=lr, writer,
-        device=device, save_file=save_path)
+        model, EPOCHS, train_loader, val_loader, writer,
+        lr=lr, device=device, save_file=save_path)
 
     # evaluate model
     true_train, preds_train = evaluate_model(
