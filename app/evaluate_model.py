@@ -6,12 +6,15 @@ import logging
 import torch
 from tqdm import tqdm
 from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sn
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, filename='log/log.txt')
 
 
-def evaluate_model(model, data_loader, doc_classes, ds="", device='cpu'):
+def evaluate_model(model, data_loader, doc_classes, writer, ds="", device='cpu'):
     """
     Evaluates a classification model on a given dataset.
     Args:
@@ -49,4 +52,35 @@ def evaluate_model(model, data_loader, doc_classes, ds="", device='cpu'):
     accuracy = accuracy_score(true, preds)
     print(f"{ds} Accuracy: ", accuracy)
     logger.info("%s set evaluated with accuracy score of %f", ds, accuracy)
+
+    plot_confusion_matrix(preds, true, doc_classes, writer, ds)
+
     return true, preds
+
+
+def plot_confusion_matrix(preds, targets, doc_classes, writer, ds):
+    """
+    Plots and logs a confusion matrix to TensorBoard.
+    Args:
+        preds: A list containing the predicted labels for the evaluated data.
+        targets: A list containing the true labels for the evaluated data.
+        doc_classes: A list containing the names of the document classes.
+        writer: A TensorBoard SummaryWriter object for logging the confusion matrix.
+        ds: An optional string to specify the dataset name (e.g., "train", "val", "test")
+    """
+
+    # calculate confusion matrix
+    conf_mat = confusion_matrix(preds, targets)
+
+    # create confusion matrix figure
+    ax = plt.subplot()
+    sn.heatmap(conf_mat, annot=True, fmt="g")
+    ax.set_xlabel('Predicted labels')
+    ax.set_ylabel('True labels')
+    ax.set_title(f'Confusion Matrix-{ds} Set', fontsize=10)
+    ax.xaxis.set_ticklabels(doc_classes, rotation=90, fontsize=7)
+    ax.yaxis.set_ticklabels(doc_classes, rotation=0, fontsize=7)
+
+    # log confusion matrix figure to tensorboard
+    writer.add_figure(tag=f'confusion_matrix-{ds}', figure=ax.get_figure())
+    logging.info('%s Confusion matrix logged to tensorboard', ds)
