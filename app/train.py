@@ -10,19 +10,19 @@ import numpy as np
 from tqdm import tqdm
 
 
-def train(model, epochs, train_loader, val_loader, lr=0.001,
+def train(model, epochs, train_loader, val_loader, writer, lr=0.001,
           device='cpu', save_file=None):
     """
     Trains a PyTorch classification model on a given dataset.
     Args:
-      model: The PyTorch model to be trained.
-      epochs: The number of training epochs.
-      train_loader: A PyTorch data loader that yields batches of training data.
-      val_loader: A PyTorch data loader that yields batches of validation data.
-      lr: The learning rate for the optimizer (defaults to 0.001).
-      device: The device to use for training ('cpu' or 'cuda').
-      save_file: An optional string specifying the filename to save the
-                trained model, won't save model if file name not given.
+        model: The PyTorch model to be trained.
+        epochs: The number of training epochs.
+        train_loader: A PyTorch data loader that yields batches of training data.
+        val_loader: A PyTorch data loader that yields batches of validation data.
+        lr: The learning rate for the optimizer (defaults to 0.001).
+        device: The device to use for training ('cpu' or 'cuda').
+        save_file: An optional string specifying the filename to save the
+                    trained model, won't save model if file name not given.
 
     Returns:
       Four lists containing the training and validation losses and
@@ -93,12 +93,27 @@ def train(model, epochs, train_loader, val_loader, lr=0.001,
                 val_batch_loss.append(vloss)
                 val_batch_acc.append(test_acc)
 
-        val_loss.append(np.mean(val_batch_loss))
-        val_acc.append(np.mean(val_batch_acc))
-        train_acc.append(np.mean(batch_acc))
-        train_loss.append(np.mean(batch_loss))
+        val_epoch_loss = np.mean(val_batch_loss)
+        val_epoch_acc = np.mean(val_batch_acc)
+
+        train_epoch_loss = np.mean(batch_loss)
+        train_epoch_acc = np.mean(batch_acc)
+
+        val_loss.append(val_epoch_loss)
+        val_acc.append(np.mean(val_epoch_acc))
+        train_acc.append(train_epoch_loss)
+        train_loss.append(train_epoch_loss)
+
+        writer.add_scalars(main_tag="Loss",
+                           tag_scalar_dict={"train_loss": train_epoch_loss,
+                                            "val_loss": val_epoch_loss},
+                           global_step=epoch)
+        writer.add_scalars(main_tag="Accuracy",
+                           tag_scalar_dict={"train_acc": train_epoch_acc,
+                                            "val_acc": val_epoch_acc},
+                           global_step=epoch)
 
     if save_file:
         torch.save(model, save_file)
-
+    writer.close()
     return train_acc, train_loss, val_acc, val_loss
