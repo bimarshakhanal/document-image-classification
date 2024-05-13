@@ -10,10 +10,12 @@ The module defines following commandline arguments:
 """
 
 import argparse
+import os
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
+from prepare_dataset import prepare_dataset
 from train import train
 from model import Vgg16, Resnet18
 from evaluate_model import evaluate_model
@@ -44,8 +46,12 @@ MODEL_NAME = args.model_name
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.manual_seed(28)
 
+# define dataset path
+TRAIN_DIR = 'dataset/final/train'
+VAL_DIR = 'dataset/final/val'
+
 # define number of classes and batch size
-NUM_CLASSES = 3
+NUM_CLASSES = len(os.listdir(TRAIN_DIR))
 BATCH_SIZE = 4
 
 
@@ -65,9 +71,11 @@ def get_model(model_name):
 
 
 if __name__ == "__main__":
-    # define dataset path
-    TRAIN_DIR = 'dataset/final/train'
-    VAL_DIR = 'dataset/final/val'
+
+    # check if dataset exists
+    if not os.path.exists('dataset/final'):
+        print("Dataset doesn't exit, preparing dataset.")
+        prepare_dataset()
 
     # get model and data loaders
 
@@ -90,4 +98,5 @@ if __name__ == "__main__":
         model, val_loader, doc_classes, writer, 'Val', device)
 
     hparams = {'epochs': EPOCHS, 'lr': lr, 'batch_size': BATCH_SIZE}
-    writer.add_hparams(val_report, hparams)
+    writer.add_hparams(train_report, hparams, run_name='train')
+    writer.add_hparams(val_report, hparams, run_name='val')

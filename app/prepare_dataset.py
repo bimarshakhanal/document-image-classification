@@ -36,7 +36,7 @@ transform = A.Compose(
 )
 
 logger = logging.getLogger('prepare_dataset')
-logging.basicConfig(level=logging.DEBUG, filename='log/log.txt')
+logging.basicConfig(level=logging.INFO, filename='log/log.txt')
 
 
 def augment_image(image_path, output_file):
@@ -169,9 +169,19 @@ def merge_dataset(original_data, augmented_data, final_data):
         logger.error('Failed to merge original and augmented dataset')
 
 
-if __name__ == '__main__':
+def prepare_dataset():
+    '''
+    Function to prepare dataset with following steps
+        1. Apply image transforms for augmentation
+        2. Merge Augmented and original dataset
+        3. Split merged dataset into train and validation set
+    '''
     # Augment Original Images and save
     augment_dataset(ORIGINAL_DATASET, AUGMENTED_DATASET)
 
     # merge augmented and original image sets
     merge_dataset(ORIGINAL_DATASET, AUGMENTED_DATASET, FINAL_DATASET)
+
+
+if __name__ == '__main__':
+    prepare_dataset()
