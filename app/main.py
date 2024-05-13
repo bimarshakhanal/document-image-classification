@@ -15,6 +15,7 @@ import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
+from base_logger import logger
 from prepare_dataset import prepare_dataset
 from train import train
 from model import Vgg16, Resnet18
@@ -74,7 +75,7 @@ if __name__ == "__main__":
 
     # check if dataset exists
     if not os.path.exists('dataset/final'):
-        print("Dataset doesn't exit, preparing dataset.")
+        logger.info("Dataset doesn't exit, preparing dataset.")
         prepare_dataset()
 
     # get model and data loaders

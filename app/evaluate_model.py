@@ -1,20 +1,18 @@
 """
 Module with functions for classification model evaluation
 """
-import logging
 
 import torch
 from tqdm import tqdm
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sn
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, filename='log/log.txt')
+from base_logger import logger
 
 
-def evaluate_model(model, data_loader, doc_classes, writer, ds="", device='cpu'):
+def evaluate_model(model, data_loader, doc_classes, writer, ds, device='cpu'):
     """
     Evaluates a classification model on a given dataset.
     Args:
@@ -68,8 +66,10 @@ def plot_confusion_matrix(preds, targets, doc_classes, writer, ds):
         preds: A list containing the predicted labels for the evaluated data.
         targets: A list containing the true labels for the evaluated data.
         doc_classes: A list containing the names of the document classes.
-        writer: A TensorBoard SummaryWriter object for logging the confusion matrix.
-        ds: An optional string to specify the dataset name (e.g., "train", "val", "test")
+        writer: A TensorBoard SummaryWriter object for logging the
+                confusion matrix.
+        ds: An optional string to specify the dataset name (e.g., "train",
+            "val", "test")
     """
 
     # calculate confusion matrix
@@ -86,4 +86,4 @@ def plot_confusion_matrix(preds, targets, doc_classes, writer, ds):
 
     # log confusion matrix figure to tensorboard
     writer.add_figure(tag=f'confusion_matrix-{ds}', figure=ax.get_figure())
-    logging.info('%s Confusion matrix logged to tensorboard', ds)
+    logger.info('%s Confusion matrix logged to tensorboard', ds)
