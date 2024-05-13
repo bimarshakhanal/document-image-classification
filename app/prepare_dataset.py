@@ -32,6 +32,7 @@ transform = A.Compose(
         A.VerticalFlip(p=0.5),
         A.Rotate(limit=20, p=0.5),
         A.Affine(shear=[-20, 20], p=0.2),
+        A.RandomBrightnessContrast(),
         A.ToGray(p=0.3)
     ]
 )

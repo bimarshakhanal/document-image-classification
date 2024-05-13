@@ -24,7 +24,6 @@ class ImageDataLoader:
             v2.ToPILImage(),
             v2.Resize((self.img_width, self.img_height)),
             v2.ColorJitter(brightness=.5, hue=.3),
-            v2.RandomGrayscale(p=0.3),
             v2.ToTensor(),
             v2.Normalize(
                 mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
