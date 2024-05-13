@@ -5,11 +5,12 @@ of all classes and combining augmented and original dataset
 
 import os
 import shutil
-import logging
 
 import cv2
 import albumentations as A
 from sklearn.model_selection import train_test_split
+
+from base_logger import logger
 
 ORIGINAL_DATASET = 'dataset/original'  # original dataset path
 AUGMENTED_DATASET = 'dataset/augmented'  # dataset after some prerpocessing
@@ -34,9 +35,6 @@ transform = A.Compose(
         A.ToGray(p=0.3)
     ]
 )
-
-logger = logging.getLogger('prepare_dataset')
-logging.basicConfig(level=logging.INFO, filename='log/log.txt')
 
 
 def augment_image(image_path, output_file):

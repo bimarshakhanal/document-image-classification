@@ -1,20 +1,18 @@
 """
 Module with functions for classification model evaluation
 """
-import logging
 
 import torch
 from tqdm import tqdm
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sn
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, filename='log/log.txt')
+from base_logger import logger
 
 
-def evaluate_model(model, data_loader, doc_classes, writer, ds="", device='cpu'):
+def evaluate_model(model, data_loader, doc_classes, writer, ds, device='cpu'):
     """
     Evaluates a classification model on a given dataset.
     Args:
