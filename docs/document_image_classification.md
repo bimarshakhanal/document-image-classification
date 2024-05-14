@@ -45,19 +45,19 @@ a. VGG16 with Imagenet Weights
         * Precision: 1
         * Recall: 1
         * F1-Score: 1
-        * Confusion Matrix
+        * Confusion Matrix  
         ![alt text](img/vgg_cm.png)
     * Validation Set
         * Accuracy: 0.779
         * Precision: 0.787
         * Recall: 0.772
         * F1-Score: 778
-        * Confusion Matrix
+        * Confusion Matrix  
         ![alt text](img/vgg_cm_val.png)
     * Learning Curves
-        - Train vs Validation Accuracy
+        - Train vs Validation Accuracy  
         ![Learning Curve](img/vgg_acc.png)
-        - Train vs Validation Loss
+        - Train vs Validation Loss  
         ![Learning Curve](img/vgg_loss.png)
 
     We can see, though the train and validation accuracies  are converging, the loss shows clear overfitting. In the next experiment, we will try with more simpler models.
@@ -74,17 +74,17 @@ b. Resnet18 with Imagenet Weights
         * Precision: 0.997
         * Recall: 0.996
         * F1-Score: 0.996
-        * Confusion Matrix
+        * Confusion Matrix  
         ![alt text](img/resnet_cm.png)
     * Validation Set
         * Accuracy: 0.958
         * Precision: 0.968
         * Recall: 0.958
         * F1-Score: 0.962
-        * Confusion Matrix
+        * Confusion Matrix  
         ![alt text](img/resnet_cm_val.png)
     * Learning Curves
-        - Train vs Validation Accuracy
+        - Train vs Validation Accuracy  
         ![Learning Curve](img/resnet_acc.png)
-        - Train vs Validation Loss
+        - Train vs Validation Loss  
         ![Learning Curve](img/resnet_loss.png)
