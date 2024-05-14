@@ -9,12 +9,12 @@ Reference:
 
     b. [DocDiff: Document Enhancement via Residual Diffusion Models](https://arxiv.org/pdf/2305.03892)  
     DocDiff, a diffusion-based framework for document enhancement, specifically designed for tasks like document deblurring, denoising, and watermark/seal removal.  DocDiff consists of two modules: the Coarse Predictor (CP) for low-frequency content recovery, and the High-Frequency Residual Refinement (HRR) module for predicting high-frequency information (text edges).The HRR module is a plug-and-play component in pre-trained DocDiff, which significantly sharpens text edges in SOTA deblurring methods without additional joint training. The paper discusses the challenges in document enhancement, including noise elimination and pixel-level text generation with low latency on high-resolution document images.
-    ![alt text](doc_diff.png)
+    ![alt text](img/doc_diff.png)
 
     c. [SVDocNet: Spatially Variant U-Net for Blind
 Document Deblurring](https://openreview.net/pdf?id=Hyx3f65qLS)  
     SVDocNet, a spatially variant U-Net for blind document deblurring, which is an end-to-end trainable network consisting of recurrent layers in the skip connections.The network is motivated by the fact that conventional CNNs may require a large number of parameters and complex architecture for image deblurring due to the large receptive field of the inverse filter. The proposed SVDocNet uses a spatially variant RNN to efficiently cover a large receptive field with minimal network parameters, reducing computation cost.
-    ![alt text](sv_doc.png)
+    ![alt text](img/sv_doc.png)
 
 2. Resolution Imrpvement  
     Image upscaling and interpolation are both techniques used to increase the resolution of an image, but they operate in different ways and have different effects.
