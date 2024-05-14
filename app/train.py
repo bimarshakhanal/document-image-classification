@@ -5,6 +5,7 @@ Module to train pytorch model for image classification
 import torch
 from torch import nn
 from torch import optim
+import torch.optim.lr_scheduler as lr_scheduler
 
 import numpy as np
 from tqdm import tqdm
@@ -35,6 +36,8 @@ def train(model, epochs, train_loader, val_loader, writer, lr=0.001,
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
+    scheduler = lr_scheduler.LinearLR(
+        optimizer, start_factor=.5, end_factor=0.05, total_iters=epochs)
 
     model = model.to(device)
 
@@ -68,6 +71,7 @@ def train(model, epochs, train_loader, val_loader, writer, lr=0.001,
             batch_acc.append(acc)
             # Adjust learning weights
             optimizer.step()
+            scheduler.step()
 
             pbar.set_description(f"Epoch: {epoch + 1}/{epochs} "
                                  f"Train Loss:{

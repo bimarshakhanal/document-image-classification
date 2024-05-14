@@ -51,10 +51,6 @@ torch.manual_seed(28)
 TRAIN_DIR = 'dataset/final/train'
 VAL_DIR = 'dataset/final/val'
 
-# define number of classes and batch size
-NUM_CLASSES = len(os.listdir(TRAIN_DIR))
-BATCH_SIZE = 4
-
 
 def get_model(model_name):
     '''
@@ -78,6 +74,9 @@ if __name__ == "__main__":
         logger.info("Dataset doesn't exit, preparing dataset.")
         prepare_dataset()
 
+    # define number of classes and batch size
+    NUM_CLASSES = len(os.listdir(TRAIN_DIR))
+    BATCH_SIZE = 8
     # get model and data loaders
 
     model = get_model(MODEL_NAME)
