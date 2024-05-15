@@ -6,7 +6,8 @@ of all classes and combining augmented and original dataset
 import os
 import shutil
 
-import cv2
+from PIL import Image
+import numpy as np
 import albumentations as A
 from sklearn.model_selection import train_test_split
 
@@ -48,16 +49,19 @@ def augment_image(image_path, output_file):
       output_file: Path to the file where the augmented image will be saved.
     """
     try:
-        image = cv2.imread(image_path)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # image = cv2.imread(image_path)
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = np.asarray(Image.open(image_path))
         image = transform(image=image)
         print(f'Augmenting {image_path} to {output_file}')
-        cv2.imwrite(output_file, image['image'])
+        op_image = Image.fromarray(image['image'])
+        op_image.save(output_file)
+        # cv2.imwrite(output_file, image['image'])
 
     except FileNotFoundError:
         print(f'Image {image_path} not found, skipping')
     except Exception as e:
-        print('SOmething went wrong', e)
+        print('Something went wrong', e)
 
 
 def augment_dataset(dataset_path, output_path):
