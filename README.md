@@ -28,3 +28,4 @@
     docker run -p 8000:8000 doc-image-classification 
     ```
 *Note that the model name in streamlit app should match with model name present in working direcotry*
+*You need to install nvidia-container-toolkit to use cuda in docker container*
