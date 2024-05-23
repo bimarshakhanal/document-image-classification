@@ -8,6 +8,8 @@ import torch
 from torch.nn import Softmax
 from torchvision.transforms import v2
 
+from gradcam import get_gradcam
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 doc_classes = ['Citizenship', 'License', 'Other', 'Passport']
 transform = v2.Compose([
@@ -22,7 +24,9 @@ transform = v2.Compose([
 st.set_page_config(page_title="Document Image Classification")
 
 st.header('Document Image Classification')
-st.info('Classify document image into citizenship, passport,license and other.')
+st.info('Classify document image into citizenship, passport,license\
+        and other.')
+
 
 with st.spinner(text='Loading classification model'):
     model = torch.load('resnet_all.pth', map_location=torch.device('cpu'))
@@ -44,9 +48,9 @@ def predict(img):
     probs = Softmax(dim=1)(logits).squeeze(0)
 
     # get document class index
-    doc = torch.argmax(probs).item()
+    doc_idx = torch.argmax(probs).item()
 
-    return doc_classes[doc], probs[doc].item()
+    return doc_idx, doc_classes[doc_idx], probs[doc_idx].item()
 
 
 file_up = st.file_uploader(
@@ -59,10 +63,19 @@ with col1:
     if file_up:
         IMAGE = Image.open(file_up)
         st.image(IMAGE, caption='Document Image.', width=224)
+
+# global variable to store grad_cam image, document class and confidence
+GRAD_CAM_IMAGE = None
+doc_class, conf = None, None
+
+try:
+    if IMAGE:
+        doc_idx, doc_class, conf = predict(IMAGE)
+        GRAD_CAM_IMAGE = get_gradcam(model, IMAGE, doc_idx)
+        st.success(f"Document Class: {doc_class}: {round(conf*100, 2)}%")
+except SystemError:
+    st.error("Failed to make prediction")
+
 with col2:
-    try:
-        if IMAGE:
-            doc_class, conf = predict(IMAGE)
-            st.success(f"Document Class: {doc_class}: {round(conf*100, 2)}%")
-    except SystemError:
-        st.error("Failed to make prediction")
+    if GRAD_CAM_IMAGE is not None:
+        st.image(GRAD_CAM_IMAGE, caption='Gradcam Image.', width=224)

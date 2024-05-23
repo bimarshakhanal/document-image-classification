@@ -57,7 +57,7 @@ def augment_image(image_path, output_file):
     except FileNotFoundError:
         print(f'Image {image_path} not found, skipping')
     except Exception as e:
-        print('SOmething went wrong', e)
+        print('Something went wrong', e)
 
 
 def augment_dataset(dataset_path, output_path):
